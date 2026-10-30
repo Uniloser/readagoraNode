@@ -1,0 +1,31 @@
+.page { min-height: 100svh; display: grid; place-items: center; padding: clamp(20px, 5vw, 64px); background: var(--theme-page); color: var(--theme-text); }
+.frame { width: min(100%, 1060px); min-height: min(760px, calc(100svh - 40px)); display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--theme-border); background: var(--theme-surface); padding: clamp(22px, 5vw, 56px); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--theme-text); text-decoration: none; font-size: 18px; font-weight: 700; letter-spacing: -.04em; }
+.brandMark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--theme-border-strong); font-size: 14px; }
+.counter { color: var(--theme-text); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+.counter i { color: var(--theme-text-subtle); font-style: normal; margin: 0 5px; }
+.content { width: min(100%, 820px); flex: 1; align-self: center; display: grid; grid-template-columns: minmax(220px, .9fr) 1.1fr; align-items: center; gap: clamp(32px, 8vw, 96px); padding: 56px 0; }
+.art { position: relative; aspect-ratio: 1; width: min(100%, 330px); display: grid; place-items: center; border: 1px solid var(--theme-border); background: var(--theme-surface-low); }
+.artRing { position: absolute; inset: 13%; border: 1px solid var(--theme-border-strong); transform: rotate(45deg); }
+.artIcon { display: grid; place-items: center; width: 42%; aspect-ratio: 1; border: 1px solid var(--theme-border-strong); background: var(--theme-surface-raised); font-size: clamp(42px, 7vw, 74px); color: var(--theme-text); }
+.artIndex { position: absolute; left: 12%; bottom: 10%; color: var(--theme-text-subtle); font-size: 12px; letter-spacing: .15em; }
+.artDot { position: absolute; width: 10px; height: 10px; top: 16%; right: 13%; background: var(--theme-text); }
+.copy { max-width: 480px; }
+.kicker { color: var(--theme-text-muted); font-size: 11px; font-weight: 700; letter-spacing: .17em; }
+.copy h1 { margin: 18px 0 14px; font-size: clamp(36px, 6vw, 62px); line-height: 1.04; letter-spacing: -.055em; font-weight: 700; }
+.copy p { max-width: 420px; margin: 0; color: var(--theme-text-muted); font-size: 16px; line-height: 1.7; }
+.footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; border-top: 1px solid var(--theme-border); padding-top: 24px; }
+.progress { display: flex; gap: 8px; }
+.progress button { width: 26px; height: 3px; padding: 0; border: 0; background: var(--theme-border-strong); cursor: pointer; }
+.progress button.progressActive { background: var(--theme-text); }
+.progress button:focus-visible, .continue:focus-visible, .back:focus-visible, .brand:focus-visible, .signin:focus-visible { outline: 2px solid var(--theme-focus); outline-offset: 3px; }
+.actions { display: flex; align-items: center; gap: 12px; }
+.continue { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 22px; padding: 0 18px; border: 1px solid var(--theme-action); background: var(--theme-action); color: var(--theme-action-text); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.continue span { font-size: 18px; }
+.back { min-height: 44px; padding: 0 10px; border: 0; color: var(--theme-text-muted); background: transparent; font: inherit; cursor: pointer; }
+.signin { justify-self: end; color: var(--theme-text-muted); text-decoration: none; font-size: 13px; }
+.signin b { color: var(--theme-text); margin-left: 4px; }
+.loading { min-height: 100svh; background: var(--theme-page); }
+@media (max-width: 640px) { .page { padding: 0; } .frame { min-height: 100svh; border: 0; padding: 22px 20px 28px; } .content { grid-template-columns: 1fr; gap: 30px; align-content: center; padding: 42px 0; } .art { width: min(68vw, 260px); justify-self: center; } .copy h1 { font-size: clamp(36px, 11vw, 52px); } .copy p { font-size: 15px; } .footer { grid-template-columns: 1fr auto; } .progress { grid-column: 1 / -1; } .signin { grid-column: 1 / -1; justify-self: start; } }
+@media (prefers-reduced-motion: no-preference) { .artIcon { animation: appear .45s ease both; } @keyframes appear { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } } }

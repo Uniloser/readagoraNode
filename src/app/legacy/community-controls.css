@@ -1,0 +1,21 @@
+.community-post-actions > button,
+.community-post-actions > a,
+.community-main .community-post-actions > button,
+.community-main .community-post-actions > a {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.community-post-actions .post-action-icon { width: 17px; height: 17px; flex: none; }
+.community-post-actions [aria-pressed="true"] { color: var(--theme-action); font-weight: 700; }
+.community-post-actions [data-action="post-like"][aria-pressed="true"] .post-action-icon { fill: currentColor; }
+@media (max-width: 480px) {
+  .community-post-actions .post-action-label { display: none; }
+  .community-post-actions [data-share-status] .post-action-label { display: inline; font-size: 11px; }
+  .community-post-actions .post-action-count { font-size: 12px; }
+}

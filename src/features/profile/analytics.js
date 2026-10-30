@@ -1,0 +1,18 @@
+export function createProfileAnalyticsViews(deps) {
+  const { state, esc, icon, termsField } = deps;
+
+  function authorAnalyticsView() {
+    const analytics = state.pageData?.analytics;
+    if (state.pageLoading) return '<div class="page-loading" role="status">Loading your story analytics…</div>';
+    if (!analytics) return `<div class="empty-panel" role="alert"><h2>Analytics are unavailable</h2><p>${esc(state.pageError || 'Try again after the creator analytics service is available.')}</p><button class="outline-button" data-action="analytics-retry">Try again</button></div>`;
+    const totals = analytics.totals || {};
+    const stories = Array.isArray(analytics.stories) ? analytics.stories : [];
+    const visible = stories;
+    const maxReads = Math.max(1, ...stories.map(story => Number(story.reads || 0)));
+    const metrics = [['Reads', totals.reads], ['Likes', totals.likes], ['Comments', totals.comments], ['Bookmarks', totals.bookmarks]];
+    const detailStats = story => `<div class="author-analytics-details"><div class="author-analytics-detail-stats"><span>${Number(story.likes || 0).toLocaleString()} likes</span><span>${Number(story.comments || 0).toLocaleString()} comments</span><span>${Number(story.bookmarks || 0).toLocaleString()} bookmarks</span></div>${(story.retention || []).length ? story.retention.map(chapter => `<div class="author-retention-row"><span>Ch. ${Number(chapter.chapter) || ''} · ${esc(chapter.title || 'Chapter')}</span><div class="author-retention-track"><i style="width:${Math.max(0, Math.min(100, Number(chapter.percentage) || 0))}%"></i></div><b>${Math.max(0, Math.min(100, Number(chapter.percentage) || 0))}%</b></div>`).join('') : '<p class="muted-copy">No chapter view events yet.</p>'}</div>`;
+    return `<a class="back-link" href="/profile/author-center" data-link>← Back to Author Center</a><section class="panel author-analytics-intro"><span class="eyebrow">CREATOR INSIGHTS</span><h2>Understand what readers are enjoying</h2><p>Reads, reactions, and chapter reach for stories in your catalogue.</p></section><div class="author-analytics-metrics">${metrics.map(([label,value]) => `<article class="stat-card"><small>${label}</small><b>${Number(value || 0).toLocaleString()}</b></article>`).join('')}</div><section class="panel"><div class="panel-heading"><div><span class="eyebrow">YOUR CATALOGUE</span><h2>Story performance</h2><p>${visible.length} of ${stories.length} stories · lifetime metrics from the analytics service.</p></div></div>${visible.length ? `<div class="author-analytics-list">${visible.map(story => `<details class="author-analytics-story"><summary><span class="author-analytics-story-copy"><b>${esc(story.title || 'Untitled story')}</b><small>${esc(story.genre || 'Original')} · ${story.status === 'published' ? 'Published' : 'Draft'} · Updated ${story.updated_at && !Number.isNaN(Date.parse(story.updated_at)) ? new Date(story.updated_at).toLocaleDateString() : 'recently'}</small></span><span class="author-analytics-reads"><b>${Number(story.reads || 0).toLocaleString()}</b><small>reads</small></span><span class="author-analytics-bar"><i style="width:${Math.round(Math.max(0, Number(story.reads || 0)) / maxReads * 100)}%"></i></span><span class="author-analytics-chevron" aria-hidden="true">⌄</span></summary>${detailStats(story)}</details>`).join('')}</div>` : '<div class="empty-panel"><h3>No stories to analyse yet</h3><p>Publish a story to start collecting analytics.</p></div>'}</section><section class="panel"><span class="eyebrow">HOW READS ARE COUNTED</span><h2>Reader retention</h2><p>Expand a story above to inspect chapter reach. Chapter percentages compare views with the first published chapter.</p></section>`;
+  }
+
+  return { authorAnalyticsView };
+}

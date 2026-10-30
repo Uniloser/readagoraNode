@@ -1,0 +1,10 @@
+import { DownloadFooter, DownloadHeader, DownloadMascot } from '@/app/components/download/download-site';
+
+export function DownloadAboutPage() {
+  return <div className="download-site"><DownloadHeader about/><main id="download-main" className="download-main download-about">
+    <section className="about-hero"><div><span className="download-eyebrow">A home for readers and writers</span><h1>Stories bring us closer.</h1><p>ReadAgora is a place to find stories that stay with you, share the worlds you create, and meet the people who love them.</p><a className="download-button primary-download" href="/download">Explore ReadAgora <span aria-hidden="true">→</span></a></div><div className="about-mascot"><DownloadMascot/></div></section>
+    <section className="about-story"><span className="download-eyebrow">What we believe</span><h2>Every reader is looking for a story that feels like theirs.</h2><p>ReadAgora brings independent storytelling and community together. Readers can discover original work and new voices. Writers can publish their stories and find an audience. Everyone can take part in a welcoming space built around a shared love of reading.</p></section>
+    <section className="about-values" aria-label="What you can do on ReadAgora"><article><span>01</span><h2>Find your next read</h2><p>Browse original stories, follow genres that interest you, and discover writers worth following.</p></article><article><span>02</span><h2>Share what you write</h2><p>Build your work on ReadAgora, publish chapters, and bring readers along for the journey.</p></article><article><span>03</span><h2>Join the conversation</h2><p>Connect with readers and writers through a community centered on stories.</p></article></section>
+    <section className="about-download"><div><span className="download-eyebrow">Take your reading with you</span><h2>ReadAgora on Android.</h2><p>Check the official download page for Android availability.</p></div><a href="/download" className="download-button primary-download">Go to downloads <span aria-hidden="true">→</span></a></section>
+  </main><DownloadFooter/></div>;
+}

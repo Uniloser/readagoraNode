@@ -1,0 +1,71 @@
+/* Reading preferences are independent of the site's theme. Scope the shared
+   control tokens to the reading surface so buttons, comments and the chapter
+   list remain readable in every combination of site and reader themes. */
+.reader-layout.theme-night {
+  color-scheme: dark;
+  --theme-page: #111112;
+  --theme-text: #e8e6e1;
+  --theme-text-muted: #b1b1b9;
+  --theme-text-subtle: #a0a0aa;
+  --theme-surface: #1c1c1f;
+  --theme-surface-low: #19191c;
+  --theme-surface-raised: #29292e;
+  --theme-border: #48484f;
+  --theme-border-strong: #74747e;
+  --theme-action: #e8e6e1;
+  --theme-action-text: #171719;
+  --theme-field: #19191c;
+  --theme-field-text: #e8e6e1;
+  --theme-focus: #b7a5ff;
+  --theme-danger: #ff9b9b;
+}
+.reader-layout.theme-paper {
+  color-scheme: light;
+  --theme-page: #ffffff;
+  --theme-text: #222222;
+  --theme-text-muted: #5b5b65;
+  --theme-text-subtle: #62626c;
+  --theme-surface: #ffffff;
+  --theme-surface-low: #f3f3f5;
+  --theme-surface-raised: #e9e9ed;
+  --theme-border: #d0d0d6;
+  --theme-border-strong: #85858f;
+  --theme-action: #242428;
+  --theme-action-text: #ffffff;
+  --theme-field: #ffffff;
+  --theme-field-text: #222222;
+  --theme-focus: #6144a1;
+  --theme-danger: #a12d3a;
+}
+.reader-layout.theme-warm {
+  color-scheme: light;
+  --theme-page: #f4efe4;
+  --theme-text: #342f28;
+  --theme-text-muted: #655d51;
+  --theme-text-subtle: #6a6256;
+  --theme-surface: #faf6ee;
+  --theme-surface-low: #ece5d8;
+  --theme-surface-raised: #e2d8c7;
+  --theme-border: #c9beaa;
+  --theme-border-strong: #8c7e69;
+  --theme-action: #342f28;
+  --theme-action-text: #faf6ee;
+  --theme-field: #faf6ee;
+  --theme-field-text: #342f28;
+  --theme-focus: #6144a1;
+  --theme-danger: #9d2935;
+}
+.reader-layout {
+  --reader-bg: var(--theme-page);
+  --reader-ink: var(--theme-text);
+  --theme-primary: var(--theme-action);
+}
+.reader-layout .chapter-kicker,
+.reader-layout .chapter-byline,
+.reader-layout .chapter-end,
+.reader-layout .chapter-end a,
+.reader-layout .reader-aside > span,
+.reader-layout .chapter-toc span {
+  color: var(--theme-text-muted);
+}
+.reader-layout .article-rule { background: var(--theme-border-strong); }

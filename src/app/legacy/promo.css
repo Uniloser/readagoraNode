@@ -1,0 +1,31 @@
+.ad-rotation{position:relative;min-width:0}
+.site-announcements{position:relative;margin:0 0 18px;min-width:0}
+.site-announcement[hidden]{display:none!important}
+.site-announcement{position:relative;min-height:118px;padding:18px 54px 18px 20px;border:1px solid var(--theme-border);border-left:3px solid var(--announcement-accent,var(--theme-action));border-radius:6px;background:var(--theme-surface);color:var(--theme-text)}
+.site-announcement .eyebrow{color:var(--theme-text-muted)}
+.site-announcement h2{margin:6px 0;color:var(--theme-text);font-size:18px;line-height:1.2;letter-spacing:-.35px}
+.site-announcement p{max-width:720px;margin:0;color:var(--theme-text-muted);font-size:12px;line-height:1.6}
+.site-announcement p strong{color:var(--theme-text);font-weight:700}
+.site-announcement-cta{display:inline-flex;align-items:center;gap:8px;margin-top:9px;color:var(--theme-text);font-size:11px;font-weight:700;text-decoration:none}
+.site-announcement-cta:hover{text-decoration:underline;text-underline-offset:3px}
+.site-announcement-dismiss{position:absolute;top:10px;right:10px;width:30px;height:30px;border:1px solid var(--theme-border);border-radius:4px;background:var(--theme-surface);color:var(--theme-text-muted);font-size:18px;line-height:1;cursor:pointer}
+.site-announcement-dismiss:hover{background:var(--theme-surface-raised);color:var(--theme-text)}
+.app-download-ad[hidden]{display:none!important}
+@media(max-width:600px){.site-announcements{margin-bottom:14px}.site-announcement{min-height:0;padding:15px 46px 16px 14px}.site-announcement h2{font-size:16px}.site-announcement p{font-size:11px}.site-announcement-dismiss{top:8px;right:8px}}
+@media(min-width:1100px){
+  .app-download-ad{position:relative;min-height:472px;overflow:hidden;padding:23px 21px 74px;border:1px solid #ff8a67;border-radius:6px;background:linear-gradient(158deg,#ed3d1d 0%,#ff592b 55%,#ff794d 100%);color:#fff;isolation:isolate;box-shadow:0 14px 35px #0002}
+  .app-download-ad:before,.app-download-ad:after{position:absolute;z-index:-1;border:1px solid #fff3;border-radius:50%;content:"";pointer-events:none}
+  .app-download-ad:before{width:240px;height:240px;right:-130px;top:70px;box-shadow:0 0 0 20px #ffffff0b,0 0 0 42px #ffffff08}
+  .app-download-ad:after{width:130px;height:130px;left:-75px;bottom:48px;box-shadow:0 0 0 18px #ffffff0a,0 0 0 38px #ffffff08}
+  .app-download-ad .event-promo-kicker{position:relative;z-index:1;display:block;margin-bottom:18px;color:#ffe9df;font-size:8px;font-weight:800;letter-spacing:1.5px}
+  .app-download-ad h2{position:relative;z-index:1;max-width:235px;margin:0;color:#fff;font-size:29.45px;font-weight:800;letter-spacing:-1.2px;line-height:1.02}
+  .app-download-ad>p{position:relative;z-index:1;max-width:220px;margin:13px 0 15px;color:#fff2eb;font-size:11px;line-height:1.55}
+  .app-download-art{position:absolute;right:0;bottom:44px;width:100%;height:225px;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none}
+  .app-download-art img{width:82%;height:100%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 10px 12px #601d1833)}
+  .app-download-ad .google-play-cta{z-index:2}
+  .google-play-cta>span:first-child{display:grid;gap:2px}
+  .google-play-cta small{font-size:7px;font-weight:700;letter-spacing:1.1px;color:#706b77}
+  .google-play-cta b{font-size:12.35px;font-weight:800;color:#332d61}
+  .google-play-cta>span:last-child{font-size:15.2px}
+}
+@media(min-width:1100px) and (max-height:760px){.app-download-ad{min-height:430px;padding-top:18px}.app-download-art{height:195px}}

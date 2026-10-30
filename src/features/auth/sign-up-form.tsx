@@ -1,0 +1,8 @@
+'use client';
+import { useState, type FormEvent } from 'react';
+export function SignUpForm() {
+  const [error, setError] = useState(''); const [done, setDone] = useState(false); const [pending, setPending] = useState(false);
+  async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setPending(true); setError(''); const form = new FormData(event.currentTarget); try { const response = await fetch('/api/auth/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: form.get('email'), username: form.get('username'), password: form.get('password') }) }); const payload = await response.json(); if (!response.ok) throw new Error(payload.error || 'Unable to sign up.'); if (payload.requiresConfirmation) setDone(true); else window.location.assign('/account'); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Unable to sign up.'); setPending(false); } }
+  if (done) return <p className="notice" role="status">Your account is created. Check your email to confirm it, then sign in.</p>;
+  return <form className="auth-form" onSubmit={submit}><label>Username<input name="username" autoComplete="username" minLength={3} maxLength={24} required /></label><label>Email<input name="email" type="email" autoComplete="email" required /></label><label>Password<input name="password" type="password" autoComplete="new-password" minLength={8} required /></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-dark" disabled={pending}>{pending ? 'Creating account…' : 'Create account'}</button></form>;
+}
