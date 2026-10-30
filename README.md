@@ -24,4 +24,4 @@ The browser uses the public API URL for app data. The server uses `READAGORA_API
 
 ## Checks and production
 
-Run `npm run typecheck` and `npm run build`. Deploy as a Node.js Next.js application and configure the API and Supabase variables in the hosting environment.
+Run `npm run typecheck` and `npm run build`. Deploy as a Node.js Next.js application and configure the API and Supabase variables in the hosting environment. Start with `npm start`; Next.js uses the hosting platform's `PORT` environment variable (and defaults to port 3000 when it is unset). The development server remains on port 3002.
