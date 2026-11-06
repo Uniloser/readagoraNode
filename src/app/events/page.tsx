@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { EventsPage as EventsScreen } from '@/components/application/events';
 
 export const metadata = { title: 'Events', description: 'Discover ReadAgora writing challenges, event updates, and verified champions.' };
 
 export default function EventsPage() {
-  return <LegacySiteRuntime title="ReadAgora events" description="Writing challenges bring readers and creators together around a shared story." />;
+  return <ApplicationFrame><EventsScreen /></ApplicationFrame>;
 }

@@ -33,6 +33,7 @@ export function segmentSpeechText(text) {
   return segments;
 }
 
+/** @param {(state: {rate: number, voiceURI: string, index: number, total: number, active: boolean, paused: boolean, error: string}) => void} onChange @param {() => void} onComplete */
 export function createBrowserSpeechPlayer(onChange = () => {}, onComplete = () => {}) {
   const preferences = readPreferences();
   let rate = preferences.rate;

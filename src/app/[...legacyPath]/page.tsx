@@ -1,6 +1,13 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { AccountToolsPage } from '@/components/application/account-tools';
+import { AuthPage } from '@/components/application/auth';
+import { CommunityPage, CreatorPage } from '@/components/application/community';
+import { DiscoveryPage } from '@/components/application/discovery';
+import { EventsPage } from '@/components/application/events';
+import { WorkroomPage } from '@/components/application/workroom';
+import { StoryPage } from '@/components/application/stories';
 import { isUuid } from '@/lib/routing/identifiers.js';
 
 const profileTitles: Record<string, string> = {
@@ -9,6 +16,7 @@ const profileTitles: Record<string, string> = {
   'top-up': 'Gem wallet', subscription: 'ReadAgora Premium', inbox: 'Inbox', blocked: 'Blocked users',
   'author-center': 'Author Center', 'author-analytics': 'Creator analytics', analytics: 'Creator analytics',
   'creator-center': 'Creator Center', promotions: 'Promotions', moderation: 'Moderation queue',
+  'payout-request': 'Request a payout', 'payout-history': 'Payout history',
   'agora-coins': 'Agora Coins', report: 'Report a problem', 'delete-account': 'Delete your account',
   deleteaccount: 'Delete your account', 'community-terms': 'Community terms', communityconsent: 'Community terms',
 };
@@ -47,42 +55,66 @@ export async function generateMetadata({ params }: { params: Promise<{ legacyPat
   };
 }
 
-export default async function LegacyRoutePage({ params }: { params: Promise<{ legacyPath: string[] }> }) {
+export default async function LegacyRoutePage({ params, searchParams }: { params: Promise<{ legacyPath: string[] }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { legacyPath } = await params;
-  if (legacyPath.length === 1 && legacyPath[0] === 'discover') {
-    return <LegacySiteRuntime title="Discover stories" description="Find your next world in stories and comics from ReadAgora creators." />;
-  }
   if (!isSupportedLegacyRoute(legacyPath)) notFound();
-  const lastPart = legacyPath.at(-1)?.replaceAll('-', ' ') || 'ReadAgora';
-  const title = lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
-  return <LegacySiteRuntime title={title} description={loadingDescription(legacyPath)} />;
-}
-
-function loadingDescription(parts: string[]) {
-  const path = `/${parts.join('/')}`;
-  if (path === '/feed') return 'Find your next world in stories and comics from ReadAgora creators.';
-  if (path === '/write') return 'Create stories, edit chapters, and manage your ReadAgora catalogue.';
-  if (path === '/privacy' || path === '/legal/privacy') return 'Review how ReadAgora handles account details, stories, and reading activity.';
-  if (path === '/terms' || path === '/legal/terms') return 'Review the terms for creating, sharing, and discussing content on ReadAgora.';
-  if (path === '/forgot-password') return 'Request a secure link to reset your ReadAgora password.';
-  if (path === '/reset-password' || path === '/auth/reset-password') return 'Choose a new password for your ReadAgora account.';
-  if (parts[0] === 'discovery') return `Explore ${parts[1]?.replaceAll('_', ' ') || 'all'} stories from ReadAgora creators.`;
-  if (parts[0] === 'community') return parts[1] === 'post' || parts.length > 1
-    ? 'Open this community conversation and join the discussion.'
-    : 'Join readers and creators for conversations, recommendations, and updates.';
-  if (parts[0] === 'workroom') return parts.length > 2
-    ? 'Edit story details, chapters, and publication settings in your creator workroom.'
-    : 'Create stories, manage chapters, and review how readers respond.';
-  if (parts[0] === 'profile') return `${profileTitles[parts[1]?.toLowerCase()] || 'Profile'} and account tools for ReadAgora.`;
-  if (parts[0] === 'creator' || parts[0] === 'user') return 'Meet ReadAgora creators and explore their stories.';
-  if (parts[0] === 'reader') return 'Continue to a ReadAgora story or chapter.';
-  if (parts[0] === 'auth') return 'Continue securely with your ReadAgora account.';
-  return 'Explore stories, creator tools, and community features on ReadAgora.';
+  const [section, id, action, subAction, chapterId] = legacyPath;
+  if (section === 'profile' && ['deleteaccount', 'delete-account', 'communityconsent', 'community-terms'].includes((id || '').toLowerCase())) {
+    redirect((id || '').toLowerCase().startsWith('community') ? '/terms' : '/account-deletion');
+  }
+  if ((legacyPath.length === 1 && ['discover', 'feed', 'write'].includes(section))
+    || (section === 'discovery' && legacyPath.length <= 2)) {
+    return <ApplicationFrame>{section === 'write' ? <WorkroomPage /> : <DiscoveryPage section={section === 'discovery' ? id : undefined} />}</ApplicationFrame>;
+  }
+  if (section === 'login' || section === 'signup' || section === 'forgot-password' || section === 'reset-password'
+    || (section === 'auth' && ['intent', 'reset-password'].includes(id))) {
+    const mode = section === 'signup' ? 'signup' : section === 'forgot-password' ? 'forgot-password' : section === 'reset-password' || id === 'reset-password' ? 'reset-password' : 'login';
+    return <ApplicationFrame><AuthPage mode={mode} /></ApplicationFrame>;
+  }
+  if (section === 'creator' || section === 'user') {
+    return <ApplicationFrame><CreatorPage username={id} /></ApplicationFrame>;
+  }
+  if (section === 'community') {
+    const postId = id === 'post' ? action : legacyPath.length === 2 ? id : undefined;
+    return <ApplicationFrame><CommunityPage postId={postId} /></ApplicationFrame>;
+  }
+  if (section === 'events' && legacyPath.length <= 2) {
+    return <ApplicationFrame><EventsPage slug={id} /></ApplicationFrame>;
+  }
+  if ((section === 'workroom' && id === 'story' && isUuid(action))
+    || (section === 'story' && isUuid(id) && ['manage', 'edit-chapter', 'edit-comic-chapter'].includes(action))) {
+    const storyId = section === 'workroom' ? action : id;
+    const workroomChapterId = section === 'workroom' && subAction === 'chapter' ? chapterId : undefined;
+    const importing = section === 'workroom' && subAction === 'import';
+    const legacySearch = await searchParams;
+    const chapterQuery = legacySearch.chapterId;
+    const legacyChapterId = section === 'story' ? Array.isArray(chapterQuery) ? chapterQuery[0] : chapterQuery : undefined;
+    if (section === 'story' && action !== 'manage' && !legacyChapterId) return <ApplicationFrame><WorkroomPage storyId={storyId} /></ApplicationFrame>;
+    if (section === 'story' && legacyChapterId && !isUuid(legacyChapterId)) notFound();
+    if (section === 'story' && legacyChapterId) return <ApplicationFrame><WorkroomPage storyId={storyId} chapterId={legacyChapterId} /></ApplicationFrame>;
+    return <ApplicationFrame><WorkroomPage storyId={storyId} chapterId={workroomChapterId} importing={importing} /></ApplicationFrame>;
+  }
+  if ((section === 'workroom' && legacyPath.length === 1) || (section === 'create' && id === 'story')) {
+    return <ApplicationFrame><WorkroomPage create={section === 'create'} /></ApplicationFrame>;
+  }
+  if (section === 'profile' && legacyPath.length === 2 && profileSections.has(id.toLowerCase())) {
+    return <ApplicationFrame><AccountToolsPage path={id} /></ApplicationFrame>;
+  }
+  if (section === 'legal' && legacyPath.length === 2 && ['privacy', 'terms'].includes(id)) {
+    return <ApplicationFrame><AccountToolsPage path={id} /></ApplicationFrame>;
+  }
+  if (legacyPath.length === 1 && ['terms', 'privacy', 'account-deletion', 'delete-account'].includes(section)) {
+    return <ApplicationFrame><AccountToolsPage path={section} /></ApplicationFrame>;
+  }
+  if (section === 'reader' && legacyPath.length === 2 && isUuid(id)) {
+    return <ApplicationFrame><StoryPage id={id} /></ApplicationFrame>;
+  }
+  notFound();
 }
 
 
 const discoverySections = new Set(['all', 'for_you', 'trending', 'rising', 'recently_updated', 'because_you_read', 'hidden_gems', 'genre', 'ai_generated']);
-const profileSections = new Set(['settings', 'balance', 'gems', 'rewards', 'alpha-perks', 'exchange', 'service', 'top-up', 'subscription', 'inbox', 'blocked', 'author-center', 'author-analytics', 'analytics', 'creator-center', 'promotions', 'moderation', 'agora-coins', 'report', 'deleteaccount', 'delete-account', 'communityconsent', 'community-terms']);
+const profileSections = new Set(['settings', 'balance', 'gems', 'rewards', 'alpha-perks', 'exchange', 'service', 'top-up', 'subscription', 'inbox', 'blocked', 'author-center', 'author-analytics', 'analytics', 'creator-center', 'payout-request', 'payout-history', 'promotions', 'moderation', 'agora-coins', 'report', 'deleteaccount', 'delete-account', 'communityconsent', 'community-terms']);
 
 function isSupportedLegacyRoute(parts: string[]) {
   // Shared client-rendered legal pages must also be allowed through the
@@ -112,7 +144,7 @@ function isSupportedLegacyRoute(parts: string[]) {
   if (parts[0] === 'story' && parts.length === 3 && ['manage', 'edit-chapter', 'edit-comic-chapter'].includes(parts[2])) return isUuid(parts[1]);
   if (parts[0] === 'story' && parts.length === 2) return isUuid(parts[1]);
   if (parts[0] === 'read' && parts.length === 3) return isUuid(parts[1]) && isUuid(parts[2]);
-  if (parts[0] === 'events' && parts.length === 1) return true;
+  if (parts[0] === 'events' && parts.length <= 2) return true;
   if (parts[0] === 'library' && parts.length === 1) return true;
   if (parts[0] === 'workroom' && parts.length === 1) return true;
   if (parts[0] === 'profile' && parts.length === 1) return true;

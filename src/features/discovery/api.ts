@@ -3,7 +3,7 @@ import { apiRequest } from '@/lib/api/client';
 export type Story = {
   id: string; title: string; description?: string | null; genre?: string | null;
   content_type?: string | null; cover_url?: string | null;
-  is_ai_generated?: boolean; view_count?: number; tags?: string[];
+  is_ai_generated?: boolean; view_count?: number; views_count?: number; tags?: string[];
   author?: { id?: string; display_name?: string | null; username?: string | null; avatar_url?: string | null } | null;
 };
 export type Shelf = { id: string; type: string; title: string; stories: Story[]; nextCursor?: string | null; sourceStory?: { id: string; title: string } | null; positions?: Record<string, number> };
@@ -12,7 +12,7 @@ function isRecord(value: unknown): value is Record<string, unknown> { return typ
 export function storyFrom(value: unknown): Story | null {
   if (!isRecord(value) || typeof value.id !== 'string' || typeof value.title !== 'string') return null;
   const author = isRecord(value.author) ? value.author : null;
-  return { id: value.id, title: value.title, description: typeof value.description === 'string' ? value.description : null, genre: typeof value.genre === 'string' ? value.genre : null, content_type: typeof value.content_type === 'string' ? value.content_type : null, cover_url: typeof value.cover_url === 'string' ? value.cover_url : null, is_ai_generated: value.is_ai_generated === true, view_count: typeof value.view_count === 'number' ? value.view_count : 0, tags: Array.isArray(value.tags) ? value.tags.filter((tag): tag is string => typeof tag === 'string') : [], author: author ? { id: typeof author.id === 'string' ? author.id : undefined, display_name: typeof author.display_name === 'string' ? author.display_name : null, username: typeof author.username === 'string' ? author.username : null, avatar_url: typeof author.avatar_url === 'string' ? author.avatar_url : null } : null };
+  return { id: value.id, title: value.title, description: typeof value.description === 'string' ? value.description : null, genre: typeof value.genre === 'string' ? value.genre : null, content_type: typeof value.content_type === 'string' ? value.content_type : null, cover_url: typeof value.cover_url === 'string' ? value.cover_url : null, is_ai_generated: value.is_ai_generated === true, view_count: typeof value.view_count === 'number' ? value.view_count : typeof value.views_count === 'number' ? value.views_count : 0, views_count: typeof value.views_count === 'number' ? value.views_count : undefined, tags: Array.isArray(value.tags) ? value.tags.filter((tag): tag is string => typeof tag === 'string') : [], author: author ? { id: typeof author.id === 'string' ? author.id : undefined, display_name: typeof author.display_name === 'string' ? author.display_name : null, username: typeof author.username === 'string' ? author.username : null, avatar_url: typeof author.avatar_url === 'string' ? author.avatar_url : null } : null };
 }
 
 export async function getDiscovery(): Promise<Shelf[]> {

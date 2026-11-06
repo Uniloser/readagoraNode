@@ -22,6 +22,7 @@ const STATIC_TITLES = {
   '/profile/author-analytics': 'Creator analytics',
   '/profile/analytics': 'Creator analytics',
   '/profile/creator-center': 'Creator Center',
+  '/profile/payout-request': 'Payout request',
   '/profile/promotions': 'Promotions',
   '/profile/report': 'Report a problem',
   '/profile/moderation': 'Moderation queue',
@@ -39,7 +40,8 @@ const STATIC_TITLES = {
 export function setDocumentTitle(path, state) {
   let title = STATIC_TITLES[path];
 
-  if (path.startsWith('/story/')) title = state.story?.title || 'Read a story';
+  if(path.startsWith('/events/')) title=state.pageData?.competition?.title||'Competition';
+  else if (path.startsWith('/story/')) title = state.story?.title || 'Read a story';
   else if (path.startsWith('/read/')) {
     const story = state.story?.title;
     const chapter = state.chapter?.title;

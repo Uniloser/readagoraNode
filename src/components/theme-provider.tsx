@@ -3,16 +3,16 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 export type ThemePreference = 'system' | 'dark' | 'light';
 const ThemeContext = createContext<{ theme: 'dark' | 'light'; preference: ThemePreference; setPreference: (theme: ThemePreference) => void; toggle: () => void } | null>(null);
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [preference, setPreferenceState] = useState<ThemePreference>(() => {
-    if (typeof window === 'undefined') return 'system';
-    try {
-      const stored = localStorage.getItem('readagora-theme');
-      return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
-    } catch { return 'system'; }
-  });
-  const [systemDark, setSystemDark] = useState(true);
+  // Start from the same deterministic value on the server and during hydration.
+  // Persisted preference is applied after mount to avoid mismatched markup.
+  const [preference, setPreferenceState] = useState<ThemePreference>('system');
+  const [systemDark, setSystemDark] = useState(false);
   const theme = preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
   useEffect(() => {
+    try {
+      const stored = localStorage.getItem('readagora-theme');
+      if (stored === 'light' || stored === 'dark' || stored === 'system') setPreferenceState(stored);
+    } catch { /* The default theme still works when storage is unavailable. */ }
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const update = () => setSystemDark(media.matches);
     update(); media.addEventListener('change', update);

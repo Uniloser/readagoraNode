@@ -1,6 +1,6 @@
 # ReadAgora Web
 
-The Next.js frontend for ReadAgora. It uses the existing API configured for the mobile app and keeps page rendering, feature domains, shared navigation, API access, and session handling in separate modules.
+The React and Next.js App Router frontend for ReadAgora. It uses the existing API configured for the mobile app and keeps application state, shared navigation, API access, and session handling in reusable React modules.
 
 ## Run locally
 
@@ -14,14 +14,14 @@ The browser uses the public API URL for app data. The server uses `READAGORA_API
 
 ## Project structure
 
-- `src/app`: App Router routes, metadata, authentication endpoints, and the shared legacy-route gate
-- `src/client`: browser startup, route control, and page composition
-- `src/components`: navigation, shared shell, and reusable UI
-- `src/features`: domain modules for discovery, stories, reading, community, events, creators, workroom, profile, and authentication
+- `src/app`: App Router routes, metadata, authentication endpoints, and legacy URL aliases
+- `src/components/application`: React application provider, shell, feature screens, and reusable UI
+- `src/client` and `src/features`: retained legacy implementation for reference; not imported by production routes
+- `src/components`: shared shell and reusable UI
 - `src/lib/api`: server and browser API clients
 - `src/lib/auth`: server-side session helpers
 - `public`: static assets and browser runtime assets
 
 ## Checks and production
 
-Run `npm ci`, `npm run typecheck`, and `npm run build`. The build creates `.next/standalone/server.js` and copies `public/` and `.next/static/` into the standalone output. For a Node.js host that requires a startup file, use the root `server.js`; it launches the standalone server and honors the host-provided `PORT`. Configure the API and Supabase variables in the hosting environment before building. For iPanel, set the application startup file to `server.js` and the working directory to the project root. The development server uses Next.js's default port unless `PORT` is set.
+Run `npm ci`, `npm run typecheck`, and `npm run build`. The build creates `.next/standalone/server.js` and copies `public/` and `.next/static/` into the standalone output. For a Node.js host that requires a startup file, use the root `server.js`; it launches the standalone server and honors the host-provided `PORT`. Configure the API and Supabase variables in the hosting environment before building. For iPanel, set the application startup file to `server.js` and the working directory to the project root. The development server uses Next.js's default port unless `PORT` is set. Production hosting must be pointed to this Next.js application to complete the public-domain cutover.

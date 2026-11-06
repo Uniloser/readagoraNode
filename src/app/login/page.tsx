@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { AuthPage } from '@/components/application/auth';
 
 export const metadata = { title: 'Sign in', description: 'Sign in to your ReadAgora account.', robots: { index: false, follow: false } };
 
 export default function LoginPage() {
-  return <LegacySiteRuntime title="Welcome back" description="Sign in to pick up where your reading journey left off." />;
+  return <ApplicationFrame><AuthPage mode="login" /></ApplicationFrame>;
 }

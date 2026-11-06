@@ -81,14 +81,14 @@ function manageStoryView() {
         </form>
         <div class="managed-chapter-list">${chapters.map((chapter,index) => `<article class="managed-chapter-row">
           <span class="chapter-order">${String(index+1).padStart(2,'0')}</span>
-          <div class="chapter-order-actions">
+          <div class="chapter-order-actions" aria-label="Reorder chapter">
             <button class="subtle-button" type="button" data-action="move-chapter" data-index="${index}" data-direction="-1" aria-label="Move ${esc(chapter.title)} up" ${index === 0 ? 'disabled' : ''}>↑</button>
             <button class="subtle-button" type="button" data-action="move-chapter" data-index="${index}" data-direction="1" aria-label="Move ${esc(chapter.title)} down" ${index === chapters.length-1 ? 'disabled' : ''}>↓</button>
           </div>
-          <div><b>${esc(chapter.title)}</b><small>${esc(chapter.status)} · ${Number(chapter.word_count || 0).toLocaleString()} words</small></div>
+          <div class="chapter-summary"><b>${esc(chapter.title)}</b><small>${esc(chapter.status)} · ${Number(chapter.word_count || 0).toLocaleString()} words</small></div>
           <a class="outline-button" href="/workroom/story/${encodeURIComponent(story.id)}/chapter/${encodeURIComponent(chapter.id)}" data-link>Edit chapter</a>
-          <button class="subtle-button" type="button" data-action="chapter-status" data-id="${esc(chapter.id)}" data-story="${esc(story.id)}" data-status="${chapter.status === 'published' ? 'draft' : 'published'}">${chapter.status === 'published' ? 'Unpublish' : 'Publish'}</button>
-          <button class="subtle-button" type="button" data-action="delete-chapter" data-id="${esc(chapter.id)}" data-story="${esc(story.id)}">Delete</button>
+          <button class="subtle-button chapter-status-button" type="button" data-action="chapter-status" data-id="${esc(chapter.id)}" data-story="${esc(story.id)}" data-status="${chapter.status === 'published' ? 'draft' : 'published'}">${chapter.status === 'published' ? 'Unpublish' : 'Publish'}</button>
+          <button class="subtle-button chapter-delete-button" type="button" data-action="delete-chapter" data-id="${esc(chapter.id)}" data-story="${esc(story.id)}">Delete</button>
         </article>`).join('') || '<div class="empty-panel"><h3>No chapters yet</h3><p>Create a chapter draft to open the writing editor.</p></div>'}</div>
       </section>`;
   }

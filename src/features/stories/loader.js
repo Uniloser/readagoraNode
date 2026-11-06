@@ -10,6 +10,7 @@ export function createStoryLoader({ state, api, app, render, readingProgress, sp
     readingProgress.cancelScheduled();
     if (state.story && state.chapter && state.session) void readingProgress.sync(true);
     state.readerResumePanelIndex = null;
+    state.readerContentMode = null;
     speechPlayer.stop();
     state.supportOpen = false;
     state.supportError = '';

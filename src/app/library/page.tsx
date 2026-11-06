@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { LibraryPage as LibraryScreen } from '@/components/application/discovery';
 
 export const metadata = { title: 'Your library', description: 'Continue reading and revisit your saved ReadAgora stories.', robots: { index: false, follow: false } };
 
 export default function LibraryPage() {
-  return <LegacySiteRuntime title="Your reading room" description="Pick up where you left off or find a story you saved for later." />;
+  return <ApplicationFrame><LibraryScreen /></ApplicationFrame>;
 }

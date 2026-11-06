@@ -6,6 +6,7 @@ import './legacy/app-match.css';
 import './legacy/workspace.css';
 import './legacy/events.css';
 import './legacy/promo.css';
+import './legacy/placement-ads.css';
 import './legacy/theme.css';
 import './legacy/ux-improvements.css';
 import './route-shell.css';
@@ -42,9 +43,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <head>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
       <Script id="readagora-theme-init" strategy="beforeInteractive">
-        {"try{var p=localStorage.getItem('readagora-theme')||'system';var m=matchMedia('(prefers-color-scheme: dark)');var apply=()=>{var d=p==='system'?m.matches:p==='dark';document.documentElement.dataset.themePreference=p;document.documentElement.dataset.theme=d?'dark':'light';var c=document.querySelector('meta[name=theme-color]');if(c)c.content=d?'#000000':'#f5f5f6'};apply();m.addEventListener('change',apply)}catch{document.documentElement.dataset.themePreference='system';document.documentElement.dataset.theme='dark'}"}
+        {"try{var p=localStorage.getItem('readagora-theme')||'light';var m=matchMedia('(prefers-color-scheme: dark)');var apply=()=>{var d=p==='system'?m.matches:p==='dark';document.documentElement.dataset.themePreference=p;document.documentElement.dataset.theme=d?'dark':'light';var c=document.querySelector('meta[name=theme-color]');if(c)c.content=d?'#000000':'#f5f5f6'};apply();m.addEventListener('change',apply)}catch{document.documentElement.dataset.themePreference='light';document.documentElement.dataset.theme='light'}"}
       </Script>
     </head>
     <body><ThemeProvider><PwaRegister />{children}</ThemeProvider></body>

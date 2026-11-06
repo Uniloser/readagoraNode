@@ -29,6 +29,7 @@ function profileView() {
       ['discover', '/library', 'Viewed stories', 'Continue reading where you left off', ''],
       ['workroom', '/profile/author-center', 'Author Center', 'Stories, analytics, and creator earnings', ''],
       ['workroom', '/profile/creator-center', 'Creator Center', 'Monetization status, earnings, analytics, and payouts', ''],
+      ['workroom', '/profile/payout-request', 'Request payout', 'Submit a creator payout request', ''],
       ['workroom', '/profile/author-analytics', 'Analytics', 'Story performance and reader trends', ''],
       ['workroom', '/profile/promotions', 'Promotions', 'Reach more readers with your stories', ''],
       ['community', '/community', 'Community', 'Posts and discussions', ''],
@@ -39,7 +40,7 @@ function profileView() {
     if (user.is_alpha) items.splice(1, 0, ['profile', '/profile/alpha-perks', 'Alpha member rewards', 'Collect your founding member welcome Gems', '']);
     if (['moderator', 'admin'].includes(state.session?.user?.app_metadata?.role)) items.splice(6, 0, ['profile', '/profile/moderation', 'Moderation queue', 'Review open safety reports', '']);
     const quickPaths = new Set(['/profile/inbox', '/library', '/community']);
-    const creatorPaths = new Set(['/profile/author-center', '/profile/creator-center', '/profile/author-analytics', '/profile/promotions']);
+    const creatorPaths = new Set(['/profile/author-center', '/profile/creator-center', '/profile/payout-request', '/profile/author-analytics', '/profile/promotions']);
     const accountPaths = new Set(['/profile/service', '/profile/blocked', '/profile/report', '/profile/settings', '/profile/moderation']);
     const utilityRow = ([glyph, path, title, description, value]) => `<a class="profile-utility-row" href="${path}" data-link><span class="utility-icon">${icon(glyph)}</span><span class="utility-copy"><b>${title}</b><small>${description}</small></span>${value ? `<span class="utility-value">${value}</span>` : ''}${icon('chevron', 'utility-chevron')}</a>`;
     const groups = [

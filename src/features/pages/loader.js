@@ -13,12 +13,17 @@ export function createPageLoader({ state, api, render, app, bind, newStoryModal,
     const optional = path => api(path).then(value => ({ value, error: '' })).catch(error => currentRequest === requestId ? ({ value: null, error: error.message || 'Could not load this section.' }) : Promise.reject(error));
     render();
     try {
-      if (kind === 'events') {
+      if(kind==='event-detail') {
+        const competition=await api('/events/'+encodeURIComponent(argument));
+        if(currentRequest!==requestId)return;
+        state.pageData={competition};state.competitionConfirm=null;state.competitionPicker=false;state.competitionBusy=false;state.competitionMessage='';
+      }
+      else if (kind === 'events') {
         const championId = ++championRequest;
-        const champion = await loadPreviousChampion(api);
+        const [champion, events] = await Promise.all([loadPreviousChampion(api), api('/events')]);
         if (currentRequest !== requestId) return;
         if (championId === championRequest) {
-          state.pageData = { champion };
+          state.pageData = { champion, events };
           const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
           if (champion && !state.championRevealAutoShown && !reduceMotion) {
             state.championRevealAutoShown = true;
@@ -47,11 +52,11 @@ export function createPageLoader({ state, api, render, app, bind, newStoryModal,
         if (communityUser) state.user = communityUser;
         state.pageData = { ...(feedResult.value || { items: [], next_offset: null }), sidebar: sidebarResult.value || { discussions: [], writers: [] }, myStories: myStoriesResult.value || [], communityErrors: { feed: feedResult.error, sidebar: sidebarResult.error, myStories: myStoriesResult.error } };
       } else if (kind === 'workroom') {
-        const [stories, analyticsResult, cashWalletResult, quoteResult, payoutsResult, genresResult] = await Promise.all([
-          api('/users/me/stories'), optional('/analytics/author'), optional('/creator/cash-wallet'), optional('/creator/cashout/quote'), optional('/creator/payout-history?limit=10'), optional('/genres'),
+        const [stories, analyticsResult, genresResult] = await Promise.all([
+          api('/users/me/stories'), optional('/analytics/author'), optional('/genres'),
         ]);
         if (currentRequest !== requestId) return;
-        state.pageData = { stories: stories || [], analytics: analyticsResult.value, cashWallet: cashWalletResult.value, cashoutQuote: quoteResult.value, payouts: payoutsResult.value, genres: genresResult.value || [], workroomErrors: { analytics: analyticsResult.error, cashWallet: cashWalletResult.error, cashoutQuote: quoteResult.error, payouts: payoutsResult.error, genres: genresResult.error } };
+        state.pageData = { stories: stories || [], analytics: analyticsResult.value, genres: genresResult.value || [], workroomErrors: { analytics: analyticsResult.error, genres: genresResult.error } };
       } else if (kind === 'creator-center') {
         const [monetization, wallet, cashWallet, cashoutQuote, creatorAnalytics, transactions, cashTransactions, payouts] = await Promise.all([
           api('/users/me/monetization'), api('/creator/wallet'), api('/creator/cash-wallet'), api('/creator/cashout/quote'), api('/creator/analytics'), api('/creator/transactions?limit=30'), api('/creator/cash-transactions?limit=30'), api('/creator/payout-history?limit=30'),
@@ -59,9 +64,19 @@ export function createPageLoader({ state, api, render, app, bind, newStoryModal,
         if (currentRequest !== requestId) return;
         state.pageData = { monetization, wallet, cashWallet, cashoutQuote, creatorAnalytics, transactions: transactions || [], cashTransactions: cashTransactions || [], payouts: payouts || [] };
       } else if (kind === 'profile') {
-        const [user, followersResult, storiesResult, walletResult, achievementsResult, unreadResult] = await Promise.all([api('/users/me'), optional('/users/me/follower-count'), optional('/users/me/stories'), optional('/wallet'), optional('/wallet/achievements'), optional('/notifications/unread-count')]);
+        const [user, followersResult, storiesResult, walletResult, achievementsResult, unreadResult] = await Promise.all([
+          api('/users/me'), optional('/users/me/follower-count'), optional('/users/me/stories'), optional('/wallet'), optional('/wallet/achievements'), optional('/notifications/unread-count'),
+        ]);
         if (currentRequest !== requestId) return;
-        state.user = user; state.pageData = { user, followers: followersResult.value, stories: storiesResult.value || [], wallet: walletResult.value, achievements: achievementsResult.value || [], unread: unreadResult.value, profileErrors: { followers: followersResult.error, stories: storiesResult.error, wallet: walletResult.error, achievements: achievementsResult.error, unread: unreadResult.error } };
+        state.user = user; state.pageData = {
+          user, followers: followersResult.value, stories: storiesResult.value || [], wallet: walletResult.value,
+          achievements: achievementsResult.value || [], unread: unreadResult.value,
+          profileErrors: { followers: followersResult.error, stories: storiesResult.error, wallet: walletResult.error, achievements: achievementsResult.error, unread: unreadResult.error },
+        };
+      } else if (kind === 'profile-payout-request') {
+        const result = await optional('/creator/cashout/quote');
+        if (currentRequest !== requestId) return;
+        state.pageData = { cashoutQuote: result.value, cashoutQuoteError: result.error };
       } else if (kind === 'profile-author-center') {
         const [user, storiesResult, followersResult, walletResult, transactionsResult] = await Promise.all([
           api('/users/me'), optional('/users/me/stories'), optional('/users/me/follower-count'), optional('/wallet'), optional('/wallet/transactions?limit=5'),

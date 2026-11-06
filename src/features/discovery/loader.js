@@ -1,9 +1,19 @@
 export function createDiscoveryLoader({ state, api, render, loadStoryAd }) {
   let requestId = 0;
+  let votingRequest = 0;
+  async function loadEventVoting() {
+    const id=++votingRequest;
+    const session=state.session;
+    state.eventVotingLoading=true;
+    try { const boards=await api('/events/voting'); if(id===votingRequest && session===state.session) {state.eventVotingBoards=boards;state.eventVotingError='';} }
+    catch(error) {if(id===votingRequest && session===state.session) {state.eventVotingBoards=[];state.eventVotingError=error.message || 'Event stories could not load.';} }
+    finally {if(id===votingRequest && session===state.session) {state.eventVotingLoading=false;render();} }
+  }
   let siteAdsRequestId = 0;
 
   function invalidate() {
     requestId++;
+
   }
 
   async function loadSiteAds() {
@@ -90,7 +100,9 @@ export function createDiscoveryLoader({ state, api, render, loadStoryAd }) {
 
       if (!types.has('trending') && trending.length) normalizedShelves.push({ id: 'trending-fallback', type: 'trending', title: 'Trending Now (Ranked)', stories: trending });
       if (!types.has('new') && newReleases.length) normalizedShelves.push({ id: 'new-releases', type: 'new', title: 'New Releases', stories: newReleases });
-      state.shelves = normalizedShelves;
+      state.shelves = normalizedShelves.filter(shelf=>shelf.type!=='trending');
+      state.shelves.splice(Math.min(1,state.shelves.length),0,{id:'event-voting',type:'event_voting',stories:[]});
+      void loadEventVoting();
     } catch (error) {
       if (currentRequest === requestId) {
         state.error = error?.message || 'The ReadAgora server could not load stories. Please try again.';
@@ -108,5 +120,5 @@ export function createDiscoveryLoader({ state, api, render, loadStoryAd }) {
     }
   }
 
-  return { loadHome, invalidate, loadSiteAds };
+  return { loadHome, invalidate, loadSiteAds, loadEventVoting };
 }

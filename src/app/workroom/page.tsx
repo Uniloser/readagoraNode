@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { WorkroomPage as Workroom } from '@/components/application/workroom';
 
 export const metadata = { title: 'Creator Workroom', description: 'Create stories, manage chapters, and review your ReadAgora readership.', robots: { index: false, follow: false } };
 
 export default function WorkroomPage() {
-  return <LegacySiteRuntime title="Your creator workroom" description="Manage your stories, drafts, chapters, and creator earnings." />;
+  return <ApplicationFrame><Workroom /></ApplicationFrame>;
 }

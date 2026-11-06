@@ -101,6 +101,7 @@ export function validateOfflineChapter(chapter, storyId, chapterId) {
   }
 }
 
+/** @param {{id: string, [key: string]: any}} story @param {any[]} summaries @param {(path: string) => Promise<any>} api @param {(progress: {completed: number, total: number}) => void} onProgress */
 export async function saveStoryOffline(story, summaries, api, onProgress = () => {}) {
   if (await getOfflineStory(story.id)) throw new Error('This story is already saved offline. Remove its download before downloading it again.');
   const eligible = [...summaries].filter(chapter => chapter.status === 'published' && chapter.access_type === 'FREE' && chapter.accessible !== false).sort((a, b) => a.chapter_order - b.chapter_order);

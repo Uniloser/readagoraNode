@@ -1,15 +1,42 @@
+import { renderCompetition } from '../features/events/competition.js';
 import { setDocumentTitle } from '../lib/ui/page-title.js';
 import { enhancePageLandmarks } from '../lib/ui/page-landmarks.js';
+import { mountPlacementAds } from '../features/discovery/placement-ads.js';
+import { mountSiteAdsSvg } from '../features/discovery/site-ads.js';
 
 export function createPageRenderer(deps) {
-  const { state, app, currentPathname, bind, initSponsorFlagAnimation, initSponsorAdRotation, loadHome, header, footer, mobileTabs, readerPage, storyPage, chapterEditorView, manuscriptImportView, pageFrame, authPage, authLandingPage, searchPage, libraryView, communityView, eventsView, renderChampionReveal, renderCreatorGuide, workroomView, authorCenterView, creatorCenterView, authorAnalyticsView, promotionsView, reportView, moderationView, coinsWalletView, profileSettingsView, profileBalanceView, rewardsView, supportView, alphaPerksView, profileTopUpView, profileSubscriptionView, profileInboxView, profileBlockedView, accountDeletionPage, policyPage, termsPage, publicProfileView, communityPostView, home, discoveryStories, storyCard, esc } = deps;
+  const { state, app, currentPathname, bind, initSponsorFlagAnimation, initSponsorAdRotation, loadHome, header, footer, mobileTabs, readerPage, storyPage, chapterEditorView, manuscriptImportView, pageFrame, authPage, authLandingPage, searchPage, libraryView, communityView, eventsView, renderChampionReveal, renderCreatorGuide, workroomView, authorCenterView, creatorCenterView, payoutRequestView, authorAnalyticsView, promotionsView, reportView, moderationView, coinsWalletView, profileSettingsView, profileBalanceView, rewardsView, supportView, alphaPerksView, profileTopUpView, profileSubscriptionView, profileInboxView, profileBlockedView, accountDeletionPage, policyPage, termsPage, publicProfileView, communityPostView, home, discoveryStories, storyCard, esc } = deps;
 
   function render() {
     const path = currentPathname();
     setDocumentTitle(path, state);
     if (path.startsWith('/read/')) app.innerHTML = readerPage();
     else if (path.startsWith('/story/')) app.innerHTML = storyPage();
-    else if (/^\/workroom\/story\/[^/]+\/chapter\/[^/]+$/.test(path)) app.innerHTML = pageFrame('Chapter editor', 'WORKROOM', chapterEditorView());
+    else if (/^\/workroom\/story\/[^/]+\/chapter\/[^/]+$/.test(path)) {
+      app.innerHTML = `${chapterEditorView()}${footer()}`;
+      const { story, chapter, chapters = [] } = state.pageData || {};
+      const actions = app.querySelector('.chapter-studio-top > div:last-child');
+      if (story && chapter && actions) {
+        actions.classList.add('chapter-studio-actions');
+        const select = document.createElement('select');
+        select.className = 'chapter-mobile-select';
+        select.setAttribute('aria-label', 'Select chapter');
+        select.dataset.chapterNavigation = '';
+        select.dataset.currentPath = location.pathname;
+        chapters.forEach((item, index) => {
+          const option = document.createElement('option');
+          option.value = `/workroom/story/${encodeURIComponent(story.id)}/chapter/${encodeURIComponent(item.id)}`;
+          option.textContent = `${String(index + 1).padStart(2, '0')} · ${item.title}`;
+          option.selected = item.id === chapter.id;
+          select.append(option);
+        });
+        const newChapterOption = document.createElement('option');
+        newChapterOption.value = '__new_chapter__';
+        newChapterOption.textContent = 'New chapter';
+        select.append(newChapterOption);
+        actions.prepend(select);
+      }
+    }
     else if (/^\/workroom\/story\/[^/]+\/import$/.test(path)) app.innerHTML = pageFrame('Import manuscript', 'WORKROOM', manuscriptImportView());
     else if (path === '/auth/callback') app.innerHTML = '<main class="auth-page"><section class="auth-callback-card" aria-live="polite"><span class="eyebrow">SECURE SIGN-IN</span><h1>Completing sign-in</h1><p>Connecting your ReadAgora account. This will only take a moment.</p><span class="route-loading-indicator" aria-hidden="true"></span></section></main>';
     else if (path === '/auth/intent') app.innerHTML = authLandingPage();
@@ -18,14 +45,16 @@ export function createPageRenderer(deps) {
     else if (path === '/discovery' || path.startsWith('/discovery/')) app.innerHTML = discoverySectionPage();
     else if (path === '/library') app.innerHTML = pageFrame('Your library', 'LIBRARY', `<div class="wide-page-layout library-page-layout"><div class="wide-page-main">${libraryView()}</div></div>`);
     else if (path === '/community') app.innerHTML = pageFrame('', '', communityView());
+    else if (path.startsWith('/events/')) app.innerHTML = `${header()}<main class="workspace events-workspace">${renderCompetition(state)}</main>${footer()}${mobileTabs()}`;
     else if (path === '/events') app.innerHTML = `${header()}<main class="workspace events-workspace">${eventsView()}</main>${state.championRevealOpen ? renderChampionReveal(state.pageData?.champion) : ''}${footer()}${mobileTabs()}`;
     else if (path === '/creator') app.innerHTML = `${header()}${renderCreatorGuide(state, esc)}${footer()}${mobileTabs()}`;
-    else if (path === '/workroom') app.innerHTML = pageFrame('Workroom', 'YOUR CREATOR SPACE', workroomView());
+    else if (path === '/workroom') app.innerHTML = pageFrame('Workroom', 'YOUR CREATOR SPACE', workroomView(), 'workroom-page');
     else if (path.startsWith('/workroom/story/')) app.innerHTML = pageFrame('Manage story', 'WORKROOM', deps.manageStoryView());
     else if (path === '/profile') app.innerHTML = pageFrame('Profile', 'ACCOUNT', `<div class="wide-page-layout profile-layout"><div class="wide-page-main">${deps.profileDashboardView()}</div></div>`);
     else if (path === '/profile/author-center') app.innerHTML = pageFrame('Author Center', 'GROW & UNDERSTAND', authorCenterView());
     else if (path === '/profile/author-analytics' || path === '/profile/analytics') app.innerHTML = pageFrame('Author Analytics', 'CREATOR INSIGHTS', authorAnalyticsView());
     else if (path === '/profile/creator-center') app.innerHTML = pageFrame('Creator Center', 'YOUR CREATOR SPACE', creatorCenterView(state, esc));
+    else if (path === '/profile/payout-request') app.innerHTML = pageFrame('Payout request', 'CREATOR PAYOUTS', payoutRequestView());
     else if (path === '/profile/promotions') app.innerHTML = pageFrame('Promotions', 'CREATOR TOOLS', promotionsView());
     else if (path === '/profile/report') app.innerHTML = pageFrame('Report a problem', 'SUPPORT & SAFETY', reportView());
     else if (path === '/profile/moderation') app.innerHTML = pageFrame('Moderation queue', 'TRUST & SAFETY', moderationView());
@@ -48,8 +77,16 @@ export function createPageRenderer(deps) {
     else if (path.startsWith('/community/post/')) app.innerHTML = pageFrame('Community post', 'COMMUNITY', communityPostView());
     else if (path === '/') app.innerHTML = home();
     else app.innerHTML = `${header()}<main class="workspace empty-state"><span class="eyebrow">READAGORA / PAGE NOT FOUND</span><h1>We couldn’t find that page</h1><p>The link may be out of date. Browse stories or return to your profile.</p><a class="primary-button" href="/" data-link>Explore stories</a></main>${footer()}${mobileTabs()}`;
+    try {
+      const eventSlug=new URLSearchParams(location.search).get('event');
+      if(path.startsWith('/story/')){if(eventSlug&&/^[a-z0-9]+(-[a-z0-9]+)*$/.test(eventSlug))sessionStorage.setItem('readagora-reading-event','/events/'+eventSlug);else sessionStorage.removeItem('readagora-reading-event');}
+      const returnPath=path.startsWith('/workroom')?sessionStorage.getItem('readagora-event-return'):(path.startsWith('/story/')||path.startsWith('/read/'))?sessionStorage.getItem('readagora-reading-event'):null;
+      if(returnPath&&/^\/events\/[a-z0-9]+(-[a-z0-9]+)*$/.test(returnPath))app.querySelector('main')?.insertAdjacentHTML('afterbegin',`<a class="competition-return-link" href="${returnPath}" data-link>Return to competition &#8594;</a>`);
+    }catch{}
+    mountSiteAdsSvg(app);
     enhancePageLandmarks(app, document.title.split(/\s[|·]\s/)[0]);
     bind();
+    mountPlacementAds({app,path,api:deps.api});
     if (path.startsWith('/workroom/story/') && new URLSearchParams(location.search).get('newChapter') === '1') {
       const titleInput = app.querySelector('[data-form="new-chapter"] input[name="title"]');
       if (titleInput) {

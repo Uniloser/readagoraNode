@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { ProfilePage as ProfileScreen } from '@/components/application/profile';
 
 export const metadata = { title: 'Profile', description: 'Manage your ReadAgora profile, creator tools, and account settings.', robots: { index: false, follow: false } };
 
 export default function ProfilePage() {
-  return <LegacySiteRuntime title="Your ReadAgora profile" description="Manage your identity, creator tools, rewards, and account settings." />;
+  return <ApplicationFrame><ProfileScreen /></ApplicationFrame>;
 }

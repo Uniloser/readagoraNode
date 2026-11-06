@@ -143,7 +143,8 @@ async function handleFormSubmit(event) {
         destinationReference: String(values.destination).trim(),
         idempotencyKey: crypto.randomUUID(),
       } });
-      await loadPage('workroom'); return;
+      state.payoutRequestNotice = 'Your payout request was submitted.';
+      await loadPage('profile-payout-request'); return;
     }
     if (type === 'promotion') {
       const storyId = String(values.story_id || '');

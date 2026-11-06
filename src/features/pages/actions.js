@@ -94,6 +94,7 @@ export function createAccountAndWorkroomActions(deps) {
     }
     if (action === 'workroom-retry') { if (button.closest('.modal-backdrop')) state.openCreateStory = true; await loadPage('workroom'); return; }
     if (action === 'profile-retry') { await loadPage('profile'); return; }
+    if (action === 'profile-payout-retry') { await loadPage('profile-payout-request'); return; }
     if (action === 'profile-settings-retry') { await loadPage('profile-settings'); return; }
     if (action === 'author-center-retry') { await loadPage('profile-author-center'); return; }
     if (action === 'profile-balance-retry') { await loadPage('profile-balance'); return; }

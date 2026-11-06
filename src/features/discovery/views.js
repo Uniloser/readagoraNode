@@ -1,3 +1,4 @@
+import { renderEventVoting } from '../events/voting.js';
 export function createDiscoveryViews(deps) {
   const { state, esc, icon, image, author, storyCard } = deps;
 
@@ -140,6 +141,7 @@ export function createDiscoveryViews(deps) {
   }
 
   function shelfMarkup(shelf, index) {
+    if (shelf.type === 'event_voting' || shelf.type === 'trending') return renderEventVoting(state);
     let stories = filterStories(shelf.stories || []);
     if (shelf.type === 'for_you') {
       const featured = featuredDiscoveryStory();

@@ -1,7 +1,8 @@
-import { LegacySiteRuntime } from '@/components/legacy-site-runtime';
+import { ApplicationFrame } from '@/components/application/frame';
+import { CommunityPage as CommunityScreen } from '@/components/application/community';
 
 export const metadata = { title: 'Community', description: 'Join readers and creators in the ReadAgora community.' };
 
 export default function CommunityPage() {
-  return <LegacySiteRuntime title="Community" description="Conversations, reading recommendations, and updates from ReadAgora creators." />;
+  return <ApplicationFrame><CommunityScreen /></ApplicationFrame>;
 }

@@ -93,7 +93,7 @@ export function createRouteController(deps) {
       const mobileSection = (parts[1] || '').toLocaleLowerCase();
       if (mobileSection === 'gems') { history.replaceState({}, '', '/profile/balance'); loadPage('profile-balance'); return; }
       if (parts[1] === 'report') { state.page = 'report'; state.pageData = null; state.pageLoading = false; state.pageError = ''; render(); return; }
-      const profilePages = { settings: 'profile-settings', balance: 'profile-balance', gems: 'profile-balance', rewards: 'profile-rewards', 'alpha-perks': 'profile-alpha', exchange: 'profile-rewards', service: 'profile-service', 'top-up': 'profile-top-up', subscription: 'profile-subscription', inbox: 'profile-inbox', blocked: 'profile-blocked', 'author-center': 'profile-author-center', 'author-analytics': 'profile-author-analytics', analytics: 'profile-author-analytics', 'creator-center': 'creator-center', promotions: 'profile-promotions', moderation: 'profile-moderation', 'agora-coins': 'profile-coins' };
+      const profilePages = { settings: 'profile-settings', balance: 'profile-balance', gems: 'profile-balance', rewards: 'profile-rewards', 'alpha-perks': 'profile-alpha', exchange: 'profile-rewards', service: 'profile-service', 'top-up': 'profile-top-up', subscription: 'profile-subscription', inbox: 'profile-inbox', blocked: 'profile-blocked', 'author-center': 'profile-author-center', 'author-analytics': 'profile-author-analytics', analytics: 'profile-author-analytics', 'creator-center': 'creator-center', 'payout-request': 'profile-payout-request', promotions: 'profile-promotions', moderation: 'profile-moderation', 'agora-coins': 'profile-coins' };
       if (parts[1] && !profilePages[mobileSection]) { render(); return; }
       loadPage(profilePages[mobileSection] || 'profile'); return;
     }
@@ -104,6 +104,7 @@ export function createRouteController(deps) {
     if (parts[1] && isUuid(parts[1])) { history.replaceState({}, '', `/community/post/${encodeURIComponent(parts[1])}`); loadPage('community-post', parts[1]); return; }
     loadPage('community'); return;
   }
+  if(parts[0]==='events' && parts.length===2){state.competitionTab='Overview';loadPage('event-detail',parts[1]);return;}
   if (parts[0] === 'events') { state.eventsTab ||= 'Live'; state.pageLoading = true; state.pageError = ''; state.pageData = {}; render(); loadPage('events'); return; }
   if (parts[0] === 'creator' && parts[1]) { loadPage('creator', parts[1]); return; }
   if (parts.length === 0) {

@@ -8,7 +8,7 @@ export function createReadingProgressTracker({ state, api, app }) {
     if (!prose) return null;
     const top = window.scrollY + prose.getBoundingClientRect().top;
     const percentage = Math.max(0, Math.min(1, (window.scrollY - top) / Math.max(1, prose.scrollHeight - window.innerHeight)));
-    const panels = [...prose.querySelectorAll('.comic-panel')];
+    const panels = [...prose.querySelectorAll('.comic-panel')].filter(panel => panel.getClientRects().length > 0);
     const activePanel = panels.findIndex(panel => panel.getBoundingClientRect().bottom > 96);
     return {
       storyId: state.story.id,

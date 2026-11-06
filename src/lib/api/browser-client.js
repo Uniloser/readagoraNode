@@ -49,13 +49,13 @@ export function createBrowserApi({ apiUrl, supabaseUrl, supabaseKey, state }) {
   async function api(path, options = {}, retried = false) {
     const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
     const headers = { Accept: 'application/json', ...(options.body && !isFormData ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
-    if (!apiUrl) throw new Error('ReadAgora API is not configured. Set NEXT_PUBLIC_READAGORA_API_URL to the mobile app backend.');
+    if (!apiUrl) throw new Error('ReadAgora API is not configured. Set the same-origin API proxy path.');
     const requestUserId = state.session?.user?.id;
     const accessToken = state.session?.access_token;
     if (accessToken && !options.skipAuth) headers.Authorization = `Bearer ${accessToken}`;
     let response;
     try {
-      response = await fetch(`${apiUrl}${path}`, { method: options.method || 'GET', headers, ...(options.body ? { body: isFormData ? options.body : JSON.stringify(options.body) } : {}), signal: AbortSignal.timeout(60_000) });
+      response = await fetch(`${apiUrl}${path}`, { method: options.method || 'GET', cache: 'no-store', headers, ...(options.body ? { body: isFormData ? options.body : JSON.stringify(options.body) } : {}), signal: AbortSignal.timeout(60_000) });
     } catch (error) {
       if (error?.name === 'TimeoutError') throw new Error('The ReadAgora server took too long to respond. Please try again.');
       throw new Error('The ReadAgora server could not be reached. Check your connection and try again.');

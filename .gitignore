@@ -7,3 +7,5 @@ out/
 *.tsbuildinfo
 .codex-logs/
 .playwright-mcp/
+
+.next-event-check/

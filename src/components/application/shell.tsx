@@ -1,0 +1,9 @@
+"use client";
+import Link from 'next/link';
+import {usePathname} from 'next/navigation';
+import {useApplication} from './provider';
+import {ThemeToggle} from '@/components/theme-toggle';
+import {SiteFooter} from '@/components/site-footer';
+import type {ReactNode} from 'react';
+const nav=[['/','Discover'],['/library','Library'],['/workroom','Workroom'],['/community','Community'],['/events','Events'],['/profile','Profile']];
+export function ApplicationShell({children}:{children:ReactNode}){const {session}=useApplication(),path=usePathname();const reading=path.startsWith('/read/'),authPage=['/login','/signup','/forgot-password','/reset-password'].includes(path);const chrome=!reading&&!authPage;return <><a href="#main-content" className="skip-link">Skip to content</a>{chrome&&<header className="topbar"><Link href="/" className="brand"><img className="brand-image" src="/assets/mark.png" alt=""/><span>readagora</span></Link><nav className="main-nav" aria-label="Main navigation">{nav.map(([href,label])=><Link key={href} href={href} className={(href==='/'?path==='/':path.startsWith(href))?'active':''} aria-current={(href==='/'?path==='/':path.startsWith(href))?'page':undefined}>{label}</Link>)}</nav><div className="header-actions"><ThemeToggle/><Link href="/search" className="icon-button search-toggle" aria-label="Search stories" title="Search">⌕</Link>{session?<Link href="/profile" className="account-chip">Account</Link>:<><Link href="/login" className="sign-in">Sign in</Link><Link href="/signup" className="join-button">Get started</Link></>}</div></header>}<main id="main-content" className={reading?'react-reader-main':authPage?'workspace react-workspace react-auth-workspace':'workspace react-workspace'}>{children}</main>{chrome&&<SiteFooter/>}{chrome&&<nav className="mobile-tabs" aria-label="Mobile navigation">{nav.map(([href,label])=><Link key={href} href={href} aria-current={path===href?'page':undefined}>{label}</Link>)}</nav>}</>;}

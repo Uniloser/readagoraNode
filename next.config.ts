@@ -1,3 +1,3 @@
 import type { NextConfig } from 'next';
-const nextConfig: NextConfig = { poweredByHeader: false, output: 'standalone', distDir: process.env.NEXT_DIST_DIR || '.next', typescript: { tsconfigPath: process.env.NODE_ENV === 'production' ? 'tsconfig.build.json' : 'tsconfig.json' }, turbopack: { root: process.cwd() } };
+const nextConfig: NextConfig = { poweredByHeader: false, output: 'standalone', distDir: process.env.NEXT_DIST_DIR || '.next', typescript: { tsconfigPath: process.env.NODE_ENV === 'production' ? 'tsconfig.build.json' : 'tsconfig.json' }, experimental: { externalDir: true }, turbopack: { root: process.cwd() }, allowedDevOrigins: ['10.96.18.202'] };
 export default nextConfig;
