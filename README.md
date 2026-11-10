@@ -10,7 +10,7 @@ The React and Next.js App Router frontend for ReadAgora. It uses the existing AP
 4. Run `npm install` and `npm run dev`.
 5. Open <http://localhost:3002>.
 
-The browser uses the public API URL for app data. The server uses `READAGORA_API_URL` for authentication proxy routes. Store purchases and native subscription management remain in the mobile app where the store checkout is available.
+The browser sends app requests through the same-origin `/api/backend` proxy. The Next.js server forwards these requests to `READAGORA_API_URL`; avatars and story data therefore work on a hosted deployment as well as locally. Store purchases and native subscription management remain in the mobile app where the store checkout is available.
 
 ## Project structure
 
@@ -25,3 +25,5 @@ The browser uses the public API URL for app data. The server uses `READAGORA_API
 ## Checks and production
 
 Run `npm ci`, `npm run typecheck`, and `npm run build`. The build creates `.next/standalone/server.js` and copies `public/` and `.next/static/` into the standalone output. For a Node.js host that requires a startup file, use the root `server.js`; it launches the standalone server and honors the host-provided `PORT`. Configure the API and Supabase variables in the hosting environment before building. For iPanel, set the application startup file to `server.js` and the working directory to the project root. The development server uses Next.js's default port unless `PORT` is set. Production hosting must be pointed to this Next.js application to complete the public-domain cutover.
+
+Deploy the Next.js application with a server runtime, rather than uploading only static HTML files. Keep the backend reachable from the host, use production API/Supabase settings, and configure the production `/auth/callback` URL for sign-in. Uploaded avatars and covers must remain available at their stored image URLs. Backend and database changes need to be deployed separately from frontend changes.

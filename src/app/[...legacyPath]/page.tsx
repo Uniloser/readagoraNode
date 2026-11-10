@@ -59,6 +59,10 @@ export default async function LegacyRoutePage({ params, searchParams }: { params
   const { legacyPath } = await params;
   if (!isSupportedLegacyRoute(legacyPath)) notFound();
   const [section, id, action, subAction, chapterId] = legacyPath;
+  if (section === 'profile' && legacyPath.length === 2) {
+    const creatorRoutes: Record<string, string> = { 'author-analytics':'analytics', analytics:'analytics', promotions:'promotions', 'author-center':'author-center', 'creator-center':'creator-center', 'payout-request':'payout-request', 'payout-history':'payout-history' };
+    if (creatorRoutes[id.toLowerCase()]) redirect('/workroom/' + creatorRoutes[id.toLowerCase()]);
+  }
   if (section === 'profile' && ['deleteaccount', 'delete-account', 'communityconsent', 'community-terms'].includes((id || '').toLowerCase())) {
     redirect((id || '').toLowerCase().startsWith('community') ? '/terms' : '/account-deletion');
   }

@@ -9,3 +9,5 @@ out/
 .playwright-mcp/
 
 .next-event-check/
+
+.next-verify/

@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useApplication, useResource } from './provider';
-import { Action, Empty, LoadState, PageTitle } from './ui';
+import { Action, Empty, LoadState, PageTitle, RequireAccount } from './ui';
 
 export function ProfilePage() {
-  const { api, session, saveSession } = useApplication();
+  const { api, session, ready, saveSession } = useApplication();
   const router = useRouter();
   const resource = useResource(async () => {
+    if (!ready || !session) return null;
     const [user, followers, stories, wallet, achievements, unread] = await Promise.all([
       api('/users/me'),
       api('/users/me/follower-count').catch(() => ({ count: 0 })),
@@ -25,9 +26,9 @@ export function ProfilePage() {
       achievements: Array.isArray(achievements) ? achievements : [],
       unread: Number(unread?.count || 0),
     };
-  }, [session?.user?.id]);
+  }, [ready, session?.user?.id]);
 
-  return <>
+  return <RequireAccount>
     <PageTitle title="Your profile" description="Your ReadAgora account and creator dashboard." />
     <LoadState resource={resource}>
       {resource.data ? (() => {
@@ -87,5 +88,5 @@ export function ProfilePage() {
         </div>;
       })() : <Empty>Your profile could not be loaded.</Empty>}
     </LoadState>
-  </>;
+  </RequireAccount>;
 }
