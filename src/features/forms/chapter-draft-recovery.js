@@ -1,4 +1,4 @@
-﻿export function createChapterDraftRecovery({ state }) {
+export function createChapterDraftRecovery({ state }) {
   function key(chapterId) { return `readagora-chapter-draft:${String(chapterId)}`; }
 
   function saveLocalSnapshot() {

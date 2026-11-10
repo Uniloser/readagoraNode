@@ -1,4 +1,4 @@
-﻿export function createChapterDraftSaver({ state, app, api, chapterDraftRecovery }) {
+export function createChapterDraftSaver({ state, app, api, chapterDraftRecovery }) {
   let chapterSavePromise = null;
   let chapterSaveAgain = false;
   let savingChapterId = null;

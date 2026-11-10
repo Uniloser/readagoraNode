@@ -1,4 +1,4 @@
-﻿export function createDiscoveryInteractions({ state, app, openSearch, scheduleSearch, cancelScheduledSearch, searchStories, render }) {
+export function createDiscoveryInteractions({ state, app, openSearch, scheduleSearch, cancelScheduledSearch, searchStories, render }) {
   function bind() {
     app.querySelector('[data-scroll]')?.addEventListener('click', () => document.querySelector('#discover')?.scrollIntoView({ behavior: 'smooth' }));
     app.querySelectorAll('.search-toggle,.inline-search,.banner-button,[data-open-search]').forEach(button => button.addEventListener('click', () => openSearch()));

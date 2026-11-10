@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Link from 'next/link';
 import {useEffect,useRef,useState,type FormEvent} from 'react';
 import type {CSSProperties} from 'react';
@@ -44,7 +44,7 @@ export function LibraryPage(){
   if(!session)return [];
   return tab==='saved'?api('/bookmarks'):api('/library');
  },[tab,session?.user?.id]);
- const entries=list(r.data).map(entry=>({entry,story:tab==='saved'?(entry.story||entry):entry}));
+ const entries=libraryEntries(list(r.data));
  const matching=entries.filter(({story})=>`${story.title||''} ${story.author?.display_name||''} ${story.author?.username||''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
  matching.sort((a,b)=>sort==='title'?String(a.story.title||'').localeCompare(String(b.story.title||'')):String(b.entry.updated_at||b.entry.offline_updated_at||b.entry.created_at||'').localeCompare(String(a.entry.updated_at||a.entry.offline_updated_at||a.entry.created_at||'')));
  return <><PageTitle title="Your library" description="Your stories, all in one place. Pick up where you left off."/>
@@ -52,7 +52,7 @@ export function LibraryPage(){
    <nav className="segmented library-tabs" role="tablist" aria-label="Library stories">{[['continue','Continue reading'],['saved','Saved stories'],['offline','Offline']].map(([value,label])=><button key={value} type="button" role="tab" aria-selected={tab===value} className={tab===value?'selected':''} onClick={()=>setTab(value)}>{label}</button>)}</nav>
    <LoadState resource={r}>
     {tab!=='offline'&&!session?<section className="empty-panel library-empty"><h2>{tab==='saved'?'Sign in to restore your saved library':'Sign in to continue reading'}</h2><p>Your saved stories and reading progress are linked to your account.</p><Link className="primary-button" href="/login?next=%2Flibrary">Sign in</Link></section>:<>
-     <div className="library-toolbar"><label className="library-search"><span className="sr-only">Search your library</span><span className="library-search-icon" aria-hidden="true">⌕</span><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search your library" autoComplete="off"/></label><label className="library-sort"><span>Sort by</span><select aria-label="Sort stories" value={sort} onChange={e=>setSort(e.target.value)}><option value="recent">{tab==='saved'?'Recently saved':tab==='offline'?'Recently downloaded':'Recently read'}</option><option value="title">Title A-Z</option></select></label><span className="library-count" aria-live="polite">{matching.length} {matching.length===1?'story':'stories'}</span></div>
+     <div className="library-toolbar"><label className="library-search"><span className="sr-only">Search your library</span><span className="library-search-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5 5"/></svg></span><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search your library" autoComplete="off"/></label><label className="library-sort"><span>Sort by</span><select aria-label="Sort stories" value={sort} onChange={e=>setSort(e.target.value)}><option value="recent">{tab==='saved'?'Recently saved':tab==='offline'?'Recently downloaded':'Recently read'}</option><option value="title">Title A-Z</option></select></label><span className="library-count" aria-live="polite">{matching.length} {matching.length===1?'story':'stories'}</span></div>
      {matching.length?<div className="library-grid">{matching.map(({entry,story})=>{
       const id=String(story.id||entry.story_id||''),chapter=tab==='offline'?entry.offline_chapters?.[0]:null,chapterId=chapter?.id||entry.last_chapter_id||entry.chapter_id;
       const destination=chapterId?'/read/'+enc(id)+'/'+enc(chapterId):'/story/'+enc(id),author=story.author?.display_name||story.author?.username||'';
@@ -65,4 +65,12 @@ export function LibraryPage(){
    </LoadState>
   </div></section>
  </>;
+}
+
+export function libraryEntries(rows:Data[]){
+ return rows.flatMap(entry=>{
+  const story='story' in entry?entry.story:entry;
+  if(!story||typeof story!=='object'||!String(story.id||entry.story_id||'').trim())return [];
+  return [{entry,story:{...story,id:story.id||entry.story_id}}];
+ });
 }

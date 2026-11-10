@@ -31,3 +31,17 @@ Deploy the Next.js application with a server runtime, rather than uploading only
 The website source is self-contained: upload the complete `readagora.com` folder,
 including `src/lib/shared`. The parent repository's `shared` directory is not
 required on the host. Run `npm run build` from the website folder.
+
+### Hosted API requests return 503
+
+If `/api/backend/genres` responds with `ReadAgora API is not configured`, the
+running website has no `READAGORA_API_URL`. Set it in the host's Node application
+environment, or keep `.env.local` in the application root and use the root
+`server.js` startup file. That launcher loads the root environment before the
+generated standalone server changes directories. Host environment variables take
+precedence over the file. Restart the Node application after changing settings.
+
+The startup file should be `server.js`, not `.next/standalone/server.js`, when
+using root env files. Public `NEXT_PUBLIC_` values are baked into the browser
+bundle and require a rebuild when changed; `READAGORA_API_URL` is also needed
+by the running server. A successful build alone does not configure its runtime.

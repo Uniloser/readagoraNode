@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import type { Story } from '@/features/discovery/api';
 import { StoryCover } from '@/components/story-cover';
 
