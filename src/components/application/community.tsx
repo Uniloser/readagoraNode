@@ -13,7 +13,7 @@ export function CommunityPage({postId}:{postId?:string}){
  const sidebar=useResource(()=>postId?Promise.resolve({discussions:[],writers:[]}):api('/community/sidebar'),[postId,session?.user?.id]);
  const rows=postId?(r.data?[r.data]:[]):[...list(r.data),...posts],discussionItems=list(sidebar.data?.discussions),writers=list(sidebar.data?.writers);
  function reload(){setPosts([]);setNext(null);r.reload();sidebar.reload();}
- return <><PageTitle title={postId?'Community conversation':'Community'} description="Meet the readers and creators behind your next favourite story."/>
+ return <><header className="community-page-heading"><h1>{postId?'Community conversation':'Community'}</h1><p>Meet the readers and creators behind your next favourite story.</p></header>
   {!postId&&<div className="community-layout"><section className="community-main">
    <nav className="community-tabs" role="tablist" aria-label="Community feed">{[['for-you','For you'],['following','Following'],['discussions','Discussions'],['saved','Saved']].map(([value,label])=><button key={value} role="tab" aria-selected={tab===value} className={tab===value?'selected':''} onClick={()=>{setTab(value);setPosts([]);setNext(null);}}>{label}</button>)}</nav>
    {session?<button className="community-compose-prompt" onClick={()=>setComposer(value=>!value)}><span className="avatar-fallback">{(session.user?.display_name||session.user?.username||'R').slice(0,1).toUpperCase()}</span><span>Share something with the communityâ€¦</span><b aria-hidden="true">ï¼‹</b></button>:<div className="community-compose-prompt"><span>Join the conversation around your next read.</span><Link className="primary-button" href="/login?next=%2Fcommunity">Sign in to post</Link></div>}

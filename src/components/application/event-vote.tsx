@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import {loadStoryCompetitions} from '../../../../shared/story-competitions.js';
+import {loadStoryCompetitions} from '@/lib/shared/story-competitions.js';
 import {useEffect,useRef,useState} from 'react';
 import {useApplication,useResource,type Data} from './provider';
 import {enc,list} from './ui';

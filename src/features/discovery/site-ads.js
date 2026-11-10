@@ -1,4 +1,4 @@
-import { createSiteAdSvg, normalizeSiteAdCreative, resolveSiteAdHeight } from '../../../../shared/site-ad-svg.js';
+import { createSiteAdSvg, normalizeSiteAdCreative, resolveSiteAdHeight } from '../../lib/shared/site-ad-svg.js';
 
 function safeCtaUrl(value) {
   const rawUrl = String(value || '').trim();

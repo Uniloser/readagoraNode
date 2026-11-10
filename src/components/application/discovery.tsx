@@ -8,7 +8,7 @@ import {Action,Empty,enc,Field,Form,list,LoadState,PageTitle,StoryGrid,StoryTile
 import { FeaturedStoryCard, StoryCard } from '@/components/story-card';
 import type { Story } from '@/features/discovery/api';
 import {listOfflineStories,removeOfflineStory} from '@/lib/offline-library.js';
-import {createSiteAdSvg,normalizeSiteAdCreative,resolveSiteAdHeight} from '../../../../shared/site-ad-svg.js';
+import {createSiteAdSvg,normalizeSiteAdCreative,resolveSiteAdHeight} from '@/lib/shared/site-ad-svg.js';
 import {EventVoteShelf} from './event-vote';
 export function PlacementAd({placement}:{placement:string}){const {api,session}=useApplication(),r=useResource(()=>api('/api/ads?placement='+enc(placement)+'&platform=website').catch(()=>null),[placement,session?.user?.id]);const ref=useRef<HTMLElement>(null),seen=useRef(new Set<string>());const [loaded,setLoaded]=useState(false),[expired,setExpired]=useState(false);const ad=r.data;
  useEffect(()=>{setLoaded(false);setExpired(false);},[ad?.delivery_token]);

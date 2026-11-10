@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const sharedSource = await readFile(new URL('../../shared/site-ad-svg.js', import.meta.url), 'utf8');
+const sharedSource = await readFile(new URL('../src/lib/shared/site-ad-svg.js', import.meta.url), 'utf8');
 const siteAdsSource = await readFile(new URL('../src/features/discovery/site-ads.js', import.meta.url), 'utf8');
-const source = `${sharedSource}\n${siteAdsSource.replace("import { createSiteAdSvg, normalizeSiteAdCreative, resolveSiteAdHeight } from '../../../../shared/site-ad-svg.js';", '')}`;
+const source = `${sharedSource}\n${siteAdsSource.replace("import { createSiteAdSvg, normalizeSiteAdCreative, resolveSiteAdHeight } from '../../lib/shared/site-ad-svg.js';", '')}`;
 globalThis.location = { origin: 'https://readagora.com' };
 globalThis.localStorage = { getItem: () => '[]' };
 const { createSiteAdsView, createSiteAdSvg, normalizeSiteAdCreative, resolveSiteAdHeight } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);

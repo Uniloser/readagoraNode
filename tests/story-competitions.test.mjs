@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {loadStoryCompetitions} from '../../shared/story-competitions.js';
+import {loadStoryCompetitions} from '../src/lib/shared/story-competitions.js';
 
 test('dedicated membership lookup avoids scanning event lists', async () => {
   const calls = [], events = [{id: 'event', entries: [{id: 'story'}]}];

@@ -11,3 +11,5 @@ out/
 .next-event-check/
 
 .next-verify/
+
+.next-host-check/
