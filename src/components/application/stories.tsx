@@ -25,17 +25,20 @@ export function StoryPage({id}:{id:string}){
    <div className="detail-copy">
     <span className="eyebrow">{s.content_type==='comic'?'COMIC & VISUAL STORY':'READAGORA STORY'}</span>
     <h1>{s.title}</h1><p className="byline">by <Link href={'/creator/'+enc(s.author?.username||s.author_id)}>{s.author?.display_name||s.author?.username||'ReadAgora creator'}</Link></p>
-    <div className="detail-stats"><span><b>{Number(s.view_count||0).toLocaleString()}</b> reads</span><span><b>{chapters.length}</b> chapters</span><span><b>{s.genre||'Original'}</b> genre</span><EventVote key={id} storyId={id}/></div>
-    <div className="detail-actions">{chapters[0]&&<Link className="primary-button" href={'/read/'+enc(id)+'/'+enc(chapters[0].id)}>Start reading <span aria-hidden="true">→</span></Link>}
-     {!r.data?.offline&&<Action run={async()=>{if(!requireLogin())return;await api('/bookmarks'+(r.data?.saved?'/'+enc(id):''),{method:r.data?.saved?'DELETE':'POST',...(!r.data?.saved?{body:{story_id:id}}:{})});}} after={r.reload}>{r.data?.saved?'In your library':'＋ Add to library'}</Action>}
-     <details className="story-more-actions"><summary>More options</summary><div>     {!r.data?.offline&&<Action run={async()=>{if(!requireLogin())return;await api('/users/'+enc(s.author_id)+'/follow',{method:r.data?.following?'DELETE':'POST'});}} after={r.reload}>{r.data?.following?'Following creator':'Follow creator'}</Action>}
-     {offlineSaved?<><span className="offline-download-state" role="status">{download|| (r.data?.offline?'Available as an offline copy':'Saved for offline reading')}</span>{!r.data?.offline&&<Action confirm="Remove this story and its chapters from offline storage?" run={async()=>{await removeOfflineStory(id);setDownload('Offline download removed.');}}>Remove offline download</Action>}</>:<Action run={async()=>{setDownload('Preparing offline download...');try{await saveStoryOffline(s,chapters,api,(p:any)=>setDownload(`Downloading chapter ${p.completed} of ${p.total}...`));setDownload('Saved for offline reading.');}catch(error){setDownload('');throw error;}}} after={r.reload}>Download for offline</Action>}
-     <Action run={async()=>{const url=location.origin+'/story/'+enc(id)+(params.get('event')?'?event='+enc(params.get('event')):'');if(navigator.share)await navigator.share({title:s.title,url});else await navigator.clipboard.writeText(url);}}>Share</Action>
-</div></details>
-    </div>{download&&<p role="status">{download}</p>}
-    {params.get('event')&&<Link className="competition-return-link" href={'/events/'+enc(params.get('event'))}>Return to competition</Link>}
+    <div className="detail-stats"><span aria-label={Number(s.view_count||0).toLocaleString()+' reads'} title="Reads"><StoryDetailIcon name="eye"/><b>{Number(s.view_count||0).toLocaleString()}</b></span><span aria-label={chapters.length+' chapters'} title="Chapters"><StoryDetailIcon name="chapters"/><b>{chapters.length}</b></span><span className="story-stat-genre" title={'Genre: '+(s.genre||'Original')}><StoryDetailIcon name="tag"/><b>{s.genre||'Original'}</b></span><EventVote key={id} storyId={id}/></div>
+
+
 
    </div>
+    <div className="detail-actions">{chapters[0]&&<Link className="primary-button" href={'/read/'+enc(id)+'/'+enc(chapters[0].id)}>Start reading</Link>}
+     {!r.data?.offline&&<Action className="story-library-button" run={async()=>{if(!requireLogin())return;await api('/bookmarks'+(r.data?.saved?'/'+enc(id):''),{method:r.data?.saved?'DELETE':'POST',...(!r.data?.saved?{body:{story_id:id}}:{})});}} after={r.reload}><StoryDetailIcon name={r.data?.saved?'saved':'plus'}/><span className="sr-only">{r.data?.saved?'Remove from library':'Add to library'}</span></Action>}
+     <details className="story-more-actions"><summary aria-label="More story options" title="More story options"><StoryDetailIcon name="more"/></summary><div>     {!r.data?.offline&&<Action run={async()=>{if(!requireLogin())return;await api('/users/'+enc(s.author_id)+'/follow',{method:r.data?.following?'DELETE':'POST'});}} after={r.reload}>{r.data?.following?'Following creator':'Follow creator'}</Action>}
+     {offlineSaved?<><span className="offline-download-state" role="status">{download|| (r.data?.offline?'Available as an offline copy':'Saved for offline reading')}</span>{!r.data?.offline&&<Action confirm="Remove this story and its chapters from offline storage?" run={async()=>{await removeOfflineStory(id);setDownload('Offline download removed.');}}>Remove offline download</Action>}</>:<Action run={async()=>{setDownload('Preparing offline download...');try{await saveStoryOffline(s,chapters,api,(p:any)=>setDownload(`Downloading chapter ${p.completed} of ${p.total}...`));setDownload('Saved for offline reading.');}catch(error){setDownload('');throw error;}}} after={r.reload}>Download for offline</Action>}
+     <Action run={async()=>{const url=location.origin+'/story/'+enc(id)+(params.get('event')?'?event='+enc(params.get('event')):'');if(navigator.share)await navigator.share({title:s.title,url});else await navigator.clipboard.writeText(url);}}>Share</Action>
+    {params.get('event')&&<Link className="competition-return-link" href={'/events/'+enc(params.get('event'))}>Return to competition</Link>}
+</div></details>
+    </div>{download&&<p role="status">{download}</p>}
+
   </section>
   <section className="story-summary"><h2>About this story</h2>    <div className="story-tag-row">{[s.genre,...list(s.tags)].filter(Boolean).slice(0,4).map((tag:string)=><span key={tag}>{tag}</span>)}</div>
     <p className="story-description">{s.description||'No description yet.'}</p>
@@ -125,3 +128,5 @@ export function SelectionActions({contentRef,title,canQuote,onQuote}:{contentRef
   </div>{message&&<span role="status">{message}</span>}
  </div>;
 }
+
+function StoryDetailIcon({name}:{name:'eye'|'chapters'|'tag'|'plus'|'saved'|'more'}){return <svg className="story-detail-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{name==='eye'?<><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>:name==='chapters'?<><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3" cy="6" r=".5"/><circle cx="3" cy="12" r=".5"/><circle cx="3" cy="18" r=".5"/></>:name==='tag'?<><path d="M3 3h8l10 10-8 8L3 11Z"/><circle cx="7.5" cy="7.5" r="1"/></>:name==='plus'?<path d="M12 5v14M5 12h14"/>:name==='saved'?<path d="M6 3h12v18l-6-4-6 4ZM9 9l2 2 4-4"/>:<><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></>}</svg>;}
