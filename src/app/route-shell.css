@@ -194,6 +194,8 @@ body:has(.story-studio,.chapter-studio-reference) :is(.topbar,.mobile-tabs,.site
 
 /* Voting entries read as a single, compact list. */
 .voting-story-list{display:flex;flex-direction:column;width:100%}
+/* Keep stacked genre filters and stories together on mobile. */
+@media(max-width:760px){.voting-browser{align-content:start;min-height:0}}
 .voting-story-list .voting-book{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;gap:20px;padding:18px 0;border:0;border-bottom:1px solid var(--theme-border);border-radius:0;background:transparent;box-shadow:none}
 .voting-story-list .voting-book:first-child{padding-top:0}.voting-story-list .voting-book-cover{width:72px;height:90px;aspect-ratio:4/5}.voting-story-list .voting-book-rank{top:4px;left:4px;min-width:22px;min-height:22px;font-size:9px;padding:3px}
 .voting-story-list .voting-book-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:24px;row-gap:8px;padding:0;min-width:0}
